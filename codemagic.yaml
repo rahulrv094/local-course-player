@@ -1,7 +1,6 @@
 workflows:
   flutter-release:
     name: Flutter APK build (release)
-    instance_type: linux
     environment:
       flutter: stable
       vars:
