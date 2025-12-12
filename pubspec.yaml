@@ -1,0 +1,22 @@
+name: local_course_player
+description: A simple local course player (Option 2) - pick folder, sections, playlist, subtitles toggle
+publish_to: 'none'
+version: 0.0.1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  better_player: ^0.0.86
+  file_picker: ^5.2.5
+  permission_handler: ^10.4.0
+  path: ^1.8.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,20 @@
+workflows:
+  flutter-release:
+    name: Flutter APK build (release)
+    instance_type: linux
+    environment:
+      flutter: stable
+      vars:
+        FLUTTER_BUILD_MODE: "release"
+    scripts:
+      - name: Ensure project structure
+        script: |
+          flutter create .
+      - name: Install dependencies
+        script: |
+          flutter pub get
+      - name: Build release APK
+        script: |
+          flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
