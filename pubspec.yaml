@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  better_player: ^0.0.86
+  better_player: ^0.0.84
   file_picker: ^5.2.5
   permission_handler: ^10.4.0
   path: ^1.8.2
