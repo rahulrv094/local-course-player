@@ -11,9 +11,8 @@ dependencies:
     sdk: flutter
   video_player: ^2.5.1
   chewie: ^1.6.4
-  file_picker: 5.2.5
-  permission_handler: 10.4.0
   path: ^1.8.2
+
 
 dev_dependencies:
   flutter_test:
