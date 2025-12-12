@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
-import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,12 +37,30 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> pickDirectory() async {
-    // Request storage permission for older Android versions (may be needed)
-    await Permission.storage.request();
-    String? dir = await FilePicker.platform.getDirectoryPath();
-    if (dir == null) return;
-    selectedDir = dir;
-    loadSections(dir);
+    // Simple fallback: ask user to paste or type folder path.
+    final controller = TextEditingController(text: selectedDir ?? '');
+    final result = await showDialog<String?>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Enter course folder path'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: '/sdcard/Download/course-folder'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, null), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context, controller.text.trim()), child: const Text('OK')),
+        ],
+      ),
+    );
+    if (result == null || result.isEmpty) return;
+    final dir = Directory(result);
+    if (!dir.existsSync()) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Directory not found')));
+      return;
+    }
+    selectedDir = result;
+    loadSections(result);
   }
 
   void loadSections(String folderPath) {
@@ -99,7 +115,6 @@ class _MyAppState extends State<MyApp> {
       looping: false,
       allowFullScreen: true,
       allowMuting: true,
-      // Additional customization can go here
     );
 
     setState(() {
@@ -107,11 +122,9 @@ class _MyAppState extends State<MyApp> {
       currentIndex = fIdx;
     });
 
-    // when video ends, autoplay next
     _videoController!.addListener(() {
       if (_videoController!.value.position >= _videoController!.value.duration &&
           !_videoController!.value.isPlaying) {
-        // video ended
         playNext();
       }
     });
@@ -167,7 +180,6 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Row(
           children: [
-            // Left: Sections list
             Container(
               width: 240,
               color: Colors.grey[100],
@@ -190,16 +202,13 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
             const VerticalDivider(width: 1),
-            // Center: Player + Playlist
             Expanded(
               child: Column(
                 children: [
-                  // player area
                   Container(
                     color: Colors.black,
                     child: playerArea(),
                   ),
-                  // playlist for current section
                   Expanded(
                     child: currentSection == null
                         ? const Center(child: Text('Select a course folder to see sections'))
